@@ -35,9 +35,7 @@ extension NetworkManager: PokemonsFethable {
 
 extension NetworkManager: PokemonQueryable {
     func queryPokemon(_ withName: String,completion: @escaping (Result<PokemonQueryResponse, ErrosTypes>) -> Void) {
-        let endpoint = Endpoint.queryPokemon(name: "bulbasaur")
+        let endpoint = Endpoint.queryPokemon(name: "\(withName)")
         coreManager.request(endpoint, completion: completion)
     }
-
-    
 }

@@ -14,10 +14,10 @@ protocol MainPageViewModelInterface {
 final class MainPageViewModel: MainPageViewModelInterface {
     
     private weak var view: MainPageViewInterface?
-    var manager:  PokemonsFethable
+    var manager: (PokemonsFethable & PokemonQueryable)
     var poke: [Pokemon] = []
 
-    init(view: MainPageViewInterface, manager: PokemonsFethable) {
+    init(view: MainPageViewInterface, manager: (PokemonsFethable & PokemonQueryable)) {
         self.view = view
         self.manager = manager
     }
@@ -29,9 +29,21 @@ final class MainPageViewModel: MainPageViewModelInterface {
         manager.fetchPokemons { response in
             switch response {
                 case .success(let success):
-                    #warning("unforce check")
-                    self.poke = success.results!
+                    if let results = success.results {
+                        self.poke = results
+                    }
                     self.view?.updateData()
+                case .failure(let failure):
+                    print(failure)
+            }
+        }
+    }
+
+    func queryPokemon(pokemonName: String) {
+        manager.queryPokemon(pokemonName) { response in
+            switch response {
+                case .success(let success):
+                    self.view?.updateData(on: .init(name: success.name, url: success.name))
                 case .failure(let failure):
                     print(failure)
             }

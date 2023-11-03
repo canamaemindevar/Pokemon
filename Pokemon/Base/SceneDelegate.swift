@@ -19,10 +19,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        let manager = NetworkManager()
-        window?.rootViewController = MainPageView()
+        window?.rootViewController = createSearchNC()
 
         window?.makeKeyAndVisible()
+        configureNavigationBar()
+    }
+
+    func createSearchNC() -> UINavigationController {
+        let searchVC        = MainPageView()
+        searchVC.title      = "PokedexD"
+        return UINavigationController(rootViewController: searchVC)
+    }
+
+    func configureNavigationBar() {
+        UINavigationBar.appearance().tintColor = .systemRed
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
