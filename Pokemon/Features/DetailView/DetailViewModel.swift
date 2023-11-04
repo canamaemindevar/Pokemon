@@ -15,7 +15,8 @@ final class DetailViewModel: DetailViewModelInterface {
     
     private weak var view: DetailViewInterface?
     private var manager: PokemonQueryable
-
+    var pokemonResponse: PokemonQueryResponse?
+    var typeStrings: [Ability] = []
     init(view: DetailViewInterface, manager: PokemonQueryable) {
         self.view = view
         self.manager = manager
@@ -23,13 +24,16 @@ final class DetailViewModel: DetailViewModelInterface {
     func viewDidLoad() {
         view?.prepare()
     }
-
-
     func queryPokemon(pokemonName: String) {
         manager.queryPokemon(pokemonName) { response in
             switch response {
                 case .success(let success):
-                    print(success)
+                    self.pokemonResponse = success
+                    self.view?.updateView(pokemonResponse: success)
+                    if let abitly = success.abilities {
+                        self.typeStrings = abitly
+                    }
+
                 case .failure(let failure):
                     print(failure)
             }

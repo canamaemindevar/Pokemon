@@ -35,14 +35,20 @@ enum Endpoint {
 extension Endpoint: EndpointProtocol {
 
     var baseURL: String {
-        return "https://pokeapi.co"
+        switch self {
+            case .fetchPokemons:
+                return "https://pokeapi.co"
+            case .queryPokemon:
+                return "https://pokeapi.co"
+        }
+
     }
 
     var path: String {
         switch self {
             case .fetchPokemons: return "/api/v2/pokemon"
 
-            case .queryPokemon(let name): return "/api/v2/pokemon/\(name)"
+            case .queryPokemon(let name): return "/api/v2/pokemon/\(name.lowercased())"
 
         }
     }

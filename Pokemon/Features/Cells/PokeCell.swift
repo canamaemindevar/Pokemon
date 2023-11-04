@@ -5,6 +5,7 @@
 //  Created by Emincan Antalyalı on 3.11.2023.
 //
 
+import SDWebImage
 import UIKit
 
 class PokeCell: UICollectionViewCell {
@@ -30,7 +31,12 @@ class PokeCell: UICollectionViewCell {
 
     func set(follower: Pokemon) {
         pokeNameLabel.text = follower.name
-        avatarImageView.image = UIImage(named: "bulbasour.png")
+        if let url = follower.url {
+            if let id = ImageManager.extractNumberFromURL(url) {
+                let imageUrl = ImageManager.createPokemonImageURL(number: id)
+                avatarImageView.sd_setImage(with: URL(string: imageUrl))
+            }
+        }
     }
 
     private func configure() {
@@ -52,4 +58,25 @@ class PokeCell: UICollectionViewCell {
             pokeNameLabel.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
         ])
     }
+
+//    func extractNumberFromURL(_ urlString: String) -> Int? {
+//        guard let url = URL(string: urlString) else {
+//            return nil
+//        }
+//
+//        if let lastPathComponent = url.lastPathComponent.components(separatedBy: "/").last {
+//            let components = lastPathComponent.components(separatedBy: CharacterSet.decimalDigits.inverted)
+//            if let number = components.compactMap({ Int($0) }).first {
+//                return number
+//            }
+//        }
+//        return nil
+//    }
+//
+//    func createPokemonImageURL(number: Int) -> String {
+//        let paddedNumber = String(format: "%03d", number)
+//        let urlString = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/\(paddedNumber).png"
+//        return urlString
+//    }
+
 }

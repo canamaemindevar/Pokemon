@@ -25,7 +25,6 @@ class CoreNetworkManager: CoreNetworkManagerInterface {
             }
 
             guard let response = response as? HTTPURLResponse , response.statusCode >= 200 , response.statusCode <= 299 else {
-
                 completion(.failure(.responseError))
                 return
             }

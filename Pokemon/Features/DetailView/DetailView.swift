@@ -4,17 +4,19 @@
 //
 //  Created by Emincan Antalyalı on 3.11.2023.
 //
-
+import SDWebImage
 import UIKit
 
 protocol DetailViewInterface: AnyObject {
     func prepare()
+    var pokemon: Pokemon? {set get}
+    func updateView(pokemonResponse: PokemonQueryResponse)
 }
 
 final class DetailView: UIViewController {
-    
-    private lazy var viewModel = DetailViewModel(view: self,manager: NetworkManager())
 
+    private lazy var viewModel = DetailViewModel(view: self,manager: NetworkManager())
+    var pokemon: Pokemon?
     //MARK: - Components
     private let contentView : UIView = {
         let contentView = UIView()
@@ -24,20 +26,24 @@ final class DetailView: UIViewController {
         return contentView
     }()
 
-    private let pokeName : UILabel = {
-        let pokeName = UILabel()
-        pokeName.translatesAutoresizingMaskIntoConstraints = false
-        pokeName.text = "Bulbasour"
-        pokeName.textColor = .white
-        pokeName.font = UIFont.boldSystemFont(ofSize: 22)
-        return pokeName
-    }()
-
     private let pokeImage : UIImageView = {
         let pokeImage = UIImageView()
         pokeImage.translatesAutoresizingMaskIntoConstraints = false
         pokeImage.image = UIImage(named: "bulbasour")
         return pokeImage
+    }()
+
+    let mainCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let size = UIScreen.main.bounds.width
+        layout.itemSize = .init(width: size/6, height: 35)
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.layer.cornerRadius = 5
+        collection.backgroundColor = .clear
+        collection.register(PokemonTypeCollectionViewCell.self, forCellWithReuseIdentifier: PokemonTypeCollectionViewCell.identifier)
+        return collection
     }()
 
     private let aboutLabel : UILabel = {
@@ -50,19 +56,35 @@ final class DetailView: UIViewController {
         return aboutLabel
     }()
 
+    private let imageWeight : UIImageView = {
+        let imageWeight = UIImageView()
+        imageWeight.translatesAutoresizingMaskIntoConstraints = false
+        imageWeight.image = UIImage(systemName: "scalemass")
+        imageWeight.tintColor = .black
+        return imageWeight
+    }()
+
     private let weightLabel : UILabel = {
         let weightLabel = UILabel()
         weightLabel.translatesAutoresizingMaskIntoConstraints = false
         weightLabel.text = "6.9 kg"
-        weightLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        weightLabel.font = UIFont.systemFont(ofSize: 12)
         return weightLabel
+    }()
+
+    private let imageHeight : UIImageView = {
+        let imageHeight = UIImageView()
+        imageHeight.translatesAutoresizingMaskIntoConstraints = false
+        imageHeight.image = UIImage(systemName: "ruler")
+        imageHeight.tintColor = .black
+        return imageHeight
     }()
 
     private let heightLabel : UILabel = {
         let heightLabel = UILabel()
         heightLabel.translatesAutoresizingMaskIntoConstraints = false
         heightLabel.text = "0.7 m"
-        heightLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        heightLabel.font = UIFont.systemFont(ofSize: 12)
         return heightLabel
     }()
 
@@ -70,7 +92,7 @@ final class DetailView: UIViewController {
         let movesLabel = UILabel()
         movesLabel.translatesAutoresizingMaskIntoConstraints = false
         movesLabel.text = "Chlorophyll Overgrow"
-        movesLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        movesLabel.font = UIFont.systemFont(ofSize: 12)
         movesLabel.numberOfLines = 2
         return movesLabel
     }()
@@ -80,8 +102,7 @@ final class DetailView: UIViewController {
         weightLabelText.translatesAutoresizingMaskIntoConstraints = false
         weightLabelText.text = "Weight"
         weightLabelText.textColor = .gray
-        //        weightLabelText.textAlignment = .center
-        weightLabelText.font = UIFont.boldSystemFont(ofSize: 11)
+        weightLabelText.font = UIFont.systemFont(ofSize: 9)
         return weightLabelText
     }()
 
@@ -90,8 +111,7 @@ final class DetailView: UIViewController {
         heightLabelText.translatesAutoresizingMaskIntoConstraints = false
         heightLabelText.text = "Height"
         heightLabelText.textColor = .gray
-        //        heightLabelText.textAlignment = .center
-        heightLabelText.font = UIFont.boldSystemFont(ofSize: 11)
+        heightLabelText.font = UIFont.systemFont(ofSize: 9)
         return heightLabelText
     }()
 
@@ -101,7 +121,7 @@ final class DetailView: UIViewController {
         movesLabelText.text = "Moves"
         movesLabelText.textColor = .gray
         //        movesLabelText.textAlignment = .center
-        movesLabelText.font = UIFont.boldSystemFont(ofSize: 11)
+        movesLabelText.font = UIFont.systemFont(ofSize: 9)
         return movesLabelText
     }()
 
@@ -109,10 +129,19 @@ final class DetailView: UIViewController {
         let descriptionLabel = UILabel()
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.text = "There is a plant seed on its back right from the day this Pokémon is born. The seed slowly grows larger."
-        //        descriptionLabel.textAlignment = .center
-        descriptionLabel.font = UIFont(name: "Poppins", size: 13)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 10)
         descriptionLabel.numberOfLines = 0
         return descriptionLabel
+    }()
+
+    private let baseStatsLabel : UILabel = {
+        let baseStatsLabel = UILabel()
+        baseStatsLabel.translatesAutoresizingMaskIntoConstraints = false
+        baseStatsLabel.textColor = UIColor(named: "bulbasourColor")
+        baseStatsLabel.text = "Base Stats"
+        baseStatsLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        baseStatsLabel.textAlignment = .center
+        return baseStatsLabel
     }()
 
     private let tableView: UITableView = {
@@ -121,8 +150,7 @@ final class DetailView: UIViewController {
         tableView.backgroundColor = .systemBackground
         tableView.separatorColor = .systemGray
         tableView.register(StatsTableViewCell.self, forCellReuseIdentifier: StatsTableViewCell.identifier)
-        tableView.layer.cornerRadius = 0
-
+        tableView.layer.cornerRadius = 10
         return tableView
     }()
     //MARK: - Life Cycle
@@ -131,99 +159,158 @@ final class DetailView: UIViewController {
         viewModel.viewDidLoad()
         super.viewDidLoad()
     }
-    
 }
 
 //MARK: - DetailViewViewInterface
 
-extension DetailView: DetailViewInterface { 
+extension DetailView: DetailViewInterface {
+    func updateView(pokemonResponse: PokemonQueryResponse) {
 
-  func prepare() {
+        DispatchQueue.main.async {
+            if let moves = pokemonResponse.abilities?.first?.ability?.name {
+                self.movesLabel.text = moves
+            }
+            self.heightLabel.text = pokemonResponse.height?.description
+            self.weightLabel.text = pokemonResponse.weight?.description
 
-      view.backgroundColor = UIColor(named: "bulbasourColor")
-      tableView.dataSource = self
-      view.addSubview(contentView)
-      view.addSubview(pokeName)
-      view.addSubview(pokeImage)
-      view.addSubview(aboutLabel)
-      view.addSubview(weightLabel)
-      view.addSubview(heightLabel)
-      view.addSubview(movesLabel)
-      view.addSubview(weightLabelText)
-      view.addSubview(heightLabelText)
-      view.addSubview(movesLabelText)
-      view.addSubview(descriptionLabel)
-      view.addSubview(tableView)
+            if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
+                self.view.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)
+                
+            }
+            self.tableView.reloadData()
+            self.mainCollectionView.reloadData()
+            if let url = self.pokemon?.url {
+                if let id = ImageManager.extractNumberFromURL(url) {
+                    let imageUrl = ImageManager.createPokemonImageURL(number: id)
+                    self.pokeImage.sd_setImage(with: URL(string: imageUrl))
+                }
+            }
+        }
+    }
 
-      NSLayoutConstraint.activate([
-        pokeName.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-        pokeName.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
-        pokeName.widthAnchor.constraint(equalToConstant: 200),
+    func prepare() {
+        self.navigationController?.navigationBar.backgroundColor = .clear
+        tableView.dataSource = self
+        mainCollectionView.dataSource = self
+        view.addSubview(contentView)
+        view.addSubview(pokeImage)
+        view.addSubview(aboutLabel)
+        view.addSubview(weightLabel)
+        view.addSubview(heightLabel)
+        view.addSubview(movesLabel)
+        view.addSubview(weightLabelText)
+        view.addSubview(heightLabelText)
+        view.addSubview(movesLabelText)
+        view.addSubview(descriptionLabel)
+        view.addSubview(tableView)
+        view.addSubview(baseStatsLabel)
+        view.addSubview(imageWeight)
+        view.addSubview(imageHeight)
+        view.addSubview(mainCollectionView)
+        let width = UIScreen.main.bounds.width
+        if let pokemon = pokemon {
+            if let name = pokemon.name {
+                viewModel.queryPokemon(pokemonName: name)
+            }
 
-        pokeImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        pokeImage.topAnchor.constraint(equalTo: pokeName.bottomAnchor, constant: 80),
-        pokeImage.bottomAnchor.constraint(equalTo: pokeImage.bottomAnchor),
-        pokeImage.widthAnchor.constraint(equalToConstant: 200),
-        pokeImage.heightAnchor.constraint(equalToConstant: 200),
+        }
 
-        aboutLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        aboutLabel.topAnchor.constraint(equalTo: pokeImage.bottomAnchor, constant: 70),
-        aboutLabel.widthAnchor.constraint(equalToConstant: 100),
+        NSLayoutConstraint.activate([
+            pokeImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            pokeImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            pokeImage.bottomAnchor.constraint(equalTo: pokeImage.bottomAnchor),
+            pokeImage.widthAnchor.constraint(equalToConstant: 200),
+            pokeImage.heightAnchor.constraint(equalToConstant: 180),
 
-        weightLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 30),
-        weightLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
-        weightLabel.widthAnchor.constraint(equalToConstant: 100),
+            aboutLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            aboutLabel.topAnchor.constraint(equalTo: pokeImage.bottomAnchor, constant: 70),
+            aboutLabel.widthAnchor.constraint(equalToConstant: 80),
+            imageWeight.topAnchor.constraint(equalTo: weightLabel.topAnchor),
+            imageWeight.heightAnchor.constraint(equalToConstant: 12),
+            imageWeight.widthAnchor.constraint(equalToConstant: 12),
+            imageWeight.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 45),
+            imageWeight.trailingAnchor.constraint(equalTo: weightLabel.leadingAnchor, constant: -9),
 
-        heightLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 30),
-        heightLabel.leadingAnchor.constraint(equalTo: weightLabel.trailingAnchor, constant: 30),
-        heightLabel.widthAnchor.constraint(equalToConstant: 100),
+            weightLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 30),
+            weightLabel.leadingAnchor.constraint(equalTo: imageWeight.trailingAnchor, constant: 30),
+            weightLabel.widthAnchor.constraint(equalToConstant: 100),
+            imageHeight.topAnchor.constraint(equalTo: heightLabel.topAnchor),
+            imageHeight.heightAnchor.constraint(equalToConstant: 12),
+            imageHeight.widthAnchor.constraint(equalToConstant: 12),
+            imageHeight.leadingAnchor.constraint(equalTo: weightLabel.leadingAnchor, constant: 90),
+            imageHeight.trailingAnchor.constraint(equalTo: heightLabel.leadingAnchor, constant: -9),
 
-        movesLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 30),
-        movesLabel.leadingAnchor.constraint(equalTo: heightLabel.trailingAnchor, constant: 25),
-        movesLabel.widthAnchor.constraint(equalToConstant: 100),
+            heightLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 30),
+            heightLabel.leadingAnchor.constraint(equalTo: imageHeight.trailingAnchor, constant: 20),
+            heightLabel.widthAnchor.constraint(equalToConstant: 100),
 
-        weightLabelText.topAnchor.constraint(equalTo: weightLabel.bottomAnchor, constant: 30),
-        weightLabelText.centerXAnchor.constraint(equalTo: weightLabel.centerXAnchor),
-        weightLabelText.widthAnchor.constraint(equalToConstant: 100),
+            movesLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 20),
+            movesLabel.leadingAnchor.constraint(equalTo: heightLabel.trailingAnchor),
+            movesLabel.widthAnchor.constraint(equalToConstant: 100),
 
-        heightLabelText.topAnchor.constraint(equalTo: heightLabel.bottomAnchor, constant: 30),
-        heightLabelText.centerXAnchor.constraint(equalTo: heightLabel.centerXAnchor),
-        heightLabelText.widthAnchor.constraint(equalToConstant: 100),
+            weightLabelText.topAnchor.constraint(equalTo: weightLabel.bottomAnchor, constant: 20),
+            weightLabelText.leadingAnchor.constraint(equalTo: imageWeight.trailingAnchor),
+            weightLabelText.widthAnchor.constraint(equalToConstant: 100),
 
-        movesLabelText.centerXAnchor.constraint(equalTo: movesLabel.centerXAnchor),
-        movesLabelText.widthAnchor.constraint(equalToConstant: 100),
-        movesLabelText.bottomAnchor.constraint(equalTo: heightLabelText.bottomAnchor),
+            heightLabelText.topAnchor.constraint(equalTo: heightLabel.bottomAnchor, constant: 20),
+            heightLabelText.leadingAnchor.constraint(equalTo: imageHeight.trailingAnchor),
+            heightLabelText.widthAnchor.constraint(equalToConstant: 100),
 
-        descriptionLabel.topAnchor.constraint(equalTo: weightLabelText.bottomAnchor, constant: 20),
-        descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 50),
-        descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25),
+            movesLabelText.centerXAnchor.constraint(equalTo: movesLabel.centerXAnchor),
+            movesLabelText.widthAnchor.constraint(equalToConstant: 100),
+            movesLabelText.bottomAnchor.constraint(equalTo: heightLabelText.bottomAnchor),
 
-        contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
-        contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-        contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-        contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: weightLabelText.bottomAnchor, constant: 30),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
 
-        tableView.topAnchor.constraint(equalTo: movesLabelText.bottomAnchor,constant: 20),
-        tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-        contentView.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
-        view.bottomAnchor.constraint(equalTo: tableView.bottomAnchor)
-      ])
-  }
+            baseStatsLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            baseStatsLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            baseStatsLabel.widthAnchor.constraint(equalToConstant: 100),
+
+            contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
+            contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
+            contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            tableView.topAnchor.constraint(equalTo: baseStatsLabel.bottomAnchor,constant: 4),
+            tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            mainCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor,constant: 20),
+            mainCollectionView.topAnchor.constraint(equalTo: pokeImage.bottomAnchor, constant: 4),
+            mainCollectionView.bottomAnchor.constraint(equalTo: aboutLabel.topAnchor,constant: 8),
+            mainCollectionView.widthAnchor.constraint(equalToConstant: width / 2 )
+        ])
+    }
 
 }
 
-extension DetailView: UITableViewDataSource {
+extension DetailView: UITableViewDataSource , UITableViewDelegate{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        viewModel.pokemonResponse?.stats?.count ?? 4
     }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: StatsTableViewCell.identifier, for: indexPath)  as? StatsTableViewCell else {
             return UITableViewCell()
         }
-        cell.stat = Stat(baseStat: 1, effort: 1, stat: Species(name: "EMincan", url: "sfsad"))
+        let stat =  viewModel.pokemonResponse?.stats?[indexPath.row]
+        cell.stat = stat
         return cell
     }
+    
+}
+extension DetailView: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.typeStrings.count
+    }
 
-
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonTypeCollectionViewCell.identifier, for: indexPath) as? PokemonTypeCollectionViewCell else { return UICollectionViewCell() }
+        cell.typeNameLabel.text = viewModel.typeStrings[indexPath.row].ability?.name
+        cell.layer.cornerRadius = 20
+        cell.backgroundColor = .red
+        return cell
+    }
 }

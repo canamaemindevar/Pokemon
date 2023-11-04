@@ -14,7 +14,8 @@ final class StatsTableViewCell: UITableViewCell {
         didSet {
             statNameLabel.text = stat?.stat?.name
             if let statBar = stat?.baseStat {
-                progressView.setProgress(Float((statBar) / 10) , animated: false)
+                let progress = Float(statBar) / 100
+                progressView.setProgress(progress, animated: false)
             }
         }
     }
@@ -22,6 +23,8 @@ final class StatsTableViewCell: UITableViewCell {
     private let statNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.textColor = UIColor(named: "bulbasourColor")
         return label
     }()
     private var progressView: UIProgressView = {
@@ -37,6 +40,7 @@ final class StatsTableViewCell: UITableViewCell {
         sView.translatesAutoresizingMaskIntoConstraints = false
         sView.axis = .horizontal
         sView.distribution = .fillProportionally
+        sView.alignment = .center
         return sView
     }()
 
@@ -58,5 +62,16 @@ final class StatsTableViewCell: UITableViewCell {
         hStackview.addArrangedSubview(statNameLabel)
         hStackview.addArrangedSubview(progressView)
         self.hStackview.frame = bounds
+
+        NSLayoutConstraint.activate([
+            hStackview.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            hStackview.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            hStackview.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            hStackview.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+
+            progressView.widthAnchor.constraint(equalToConstant: 200),
+            progressView.heightAnchor.constraint(equalToConstant: 7)
+        ])
+
     }
 }

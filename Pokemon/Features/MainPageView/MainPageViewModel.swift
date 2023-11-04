@@ -26,13 +26,13 @@ final class MainPageViewModel: MainPageViewModelInterface {
     }
 
     func fetchPokemons() {
-        manager.fetchPokemons { response in
+        manager.fetchPokemons {[weak self] response in
             switch response {
                 case .success(let success):
                     if let results = success.results {
-                        self.poke = results
+                        self?.poke = results
                     }
-                    self.view?.updateData()
+                    self?.view?.updateData()
                 case .failure(let failure):
                     print(failure)
             }
@@ -40,15 +40,19 @@ final class MainPageViewModel: MainPageViewModelInterface {
     }
 
     func queryPokemon(pokemonName: String) {
-        manager.queryPokemon(pokemonName) { response in
+        manager.queryPokemon(pokemonName) {[weak self] response in
             switch response {
                 case .success(let success):
-                    self.view?.updateData(on: .init(name: success.name, url: success.name))
+                    if !(success.id == nil)  {
+                        self?.poke = [Pokemon.init(name: pokemonName, url: "https://pokeapi.co/api/v2/pokemon/\(String(describing: success.id))/")]
+                    }
+                    self?.view?.updateData()
                 case .failure(let failure):
                     print(failure)
             }
         }
     }
 
-   
+
+
 }
