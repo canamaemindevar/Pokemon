@@ -1,17 +1,13 @@
 //
-//  ImageView+Extension.swift
+//  ImageManager.swift
 //  Pokemon
 //
 //  Created by Emincan Antalyalı on 4.11.2023.
 //
 
 import UIKit
-extension UIImageView {
 
-
-}
-
-class ImageManager {
+final class ImageManager {
    static func extractNumberFromURL(_ urlString: String) -> Int? {
         guard let url = URL(string: urlString) else {
             return nil
@@ -25,10 +21,10 @@ class ImageManager {
         }
         return nil
     }
+
     static func createPokemonImageURL(number: Int) -> String {
         let paddedNumber = String(format: "%03d", number)
         let urlString = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/\(paddedNumber).png"
         return urlString
     }
-
 }

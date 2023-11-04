@@ -42,8 +42,6 @@ class PokeCell: UICollectionViewCell {
     private func configure() {
         addSubview(avatarImageView)
         addSubview(pokeNameLabel)
-
-
         contentView.directionalLayoutMargins = ViewMetrics.directionalMargins
 
         NSLayoutConstraint.activate([
@@ -58,25 +56,4 @@ class PokeCell: UICollectionViewCell {
             pokeNameLabel.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
         ])
     }
-
-//    func extractNumberFromURL(_ urlString: String) -> Int? {
-//        guard let url = URL(string: urlString) else {
-//            return nil
-//        }
-//
-//        if let lastPathComponent = url.lastPathComponent.components(separatedBy: "/").last {
-//            let components = lastPathComponent.components(separatedBy: CharacterSet.decimalDigits.inverted)
-//            if let number = components.compactMap({ Int($0) }).first {
-//                return number
-//            }
-//        }
-//        return nil
-//    }
-//
-//    func createPokemonImageURL(number: Int) -> String {
-//        let paddedNumber = String(format: "%03d", number)
-//        let urlString = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/\(paddedNumber).png"
-//        return urlString
-//    }
-
 }

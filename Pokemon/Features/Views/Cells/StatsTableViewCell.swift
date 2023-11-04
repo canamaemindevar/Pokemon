@@ -72,6 +72,5 @@ final class StatsTableViewCell: UITableViewCell {
             progressView.widthAnchor.constraint(equalToConstant: 200),
             progressView.heightAnchor.constraint(equalToConstant: 7)
         ])
-
     }
 }

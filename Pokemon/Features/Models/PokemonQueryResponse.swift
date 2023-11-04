@@ -15,6 +15,7 @@ struct PokemonQueryResponse: Codable {
     let height: Int?
     let id: Int?
     let isDefault: Bool?
+    let moves: [Move]?
     let name: String?
     let order: Int?
     let species: Species?
@@ -29,7 +30,7 @@ struct PokemonQueryResponse: Codable {
         case height
         case id
         case isDefault = "is_default"
-        case name, order
+        case name, order, moves
         case species, stats, types, weight
     }
 }
@@ -44,6 +45,14 @@ struct Ability: Codable {
         case ability
         case isHidden = "is_hidden"
         case slot
+    }
+}
+// MARK: - Move
+struct Move: Codable {
+    let move: Species?
+
+    enum CodingKeys: String, CodingKey {
+        case move
     }
 }
 

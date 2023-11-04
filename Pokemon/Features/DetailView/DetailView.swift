@@ -167,7 +167,7 @@ extension DetailView: DetailViewInterface {
     func updateView(pokemonResponse: PokemonQueryResponse) {
 
         DispatchQueue.main.async {
-            if let moves = pokemonResponse.abilities?.first?.ability?.name {
+            if let moves = pokemonResponse.moves?.first?.move?.name{
                 self.movesLabel.text = moves
             }
             self.heightLabel.text = pokemonResponse.height?.description
@@ -175,7 +175,7 @@ extension DetailView: DetailViewInterface {
 
             if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
                 self.view.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)
-                
+
             }
             self.tableView.reloadData()
             self.mainCollectionView.reloadData()
@@ -271,7 +271,7 @@ extension DetailView: DetailViewInterface {
             contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
-            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             tableView.topAnchor.constraint(equalTo: baseStatsLabel.bottomAnchor,constant: 4),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -308,9 +308,12 @@ extension DetailView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonTypeCollectionViewCell.identifier, for: indexPath) as? PokemonTypeCollectionViewCell else { return UICollectionViewCell() }
-        cell.typeNameLabel.text = viewModel.typeStrings[indexPath.row].ability?.name
+        cell.typeNameLabel.text = viewModel.typeStrings[indexPath.row].type?.name
         cell.layer.cornerRadius = 20
-        cell.backgroundColor = .red
+        if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
+        cell.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)
+
+        }
         return cell
     }
 }

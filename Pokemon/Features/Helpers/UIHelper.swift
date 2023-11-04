@@ -8,7 +8,6 @@
 import UIKit
 
 struct UIHelper {
-
     private enum ViewMetrics {
         static let bgColor = UIColor.systemBackground
 
@@ -29,8 +28,6 @@ struct UIHelper {
         flowLayout.sectionInset = ViewMetrics.collectionViewEdgeInsets
 
         flowLayout.itemSize = CGSize(width: itemWidth, height: itemWidth + ViewMetrics.collectionViewExtraVerticalSpace)
-
         return flowLayout
     }
-
 }
