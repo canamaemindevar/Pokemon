@@ -25,7 +25,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func createSearchNC() -> UINavigationController {
         let searchVC        = MainPageView()
-        searchVC.title      = "Pokédex"
+      //  searchVC.title      = "Pokédex"
+  
         return UINavigationController(rootViewController: searchVC)
     }
 

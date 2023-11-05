@@ -12,11 +12,17 @@ final class StatsTableViewCell: UITableViewCell {
     static let identifier = "StatsTableViewCell"
     var stat: Stat? {
         didSet {
-            statNameLabel.text = stat?.stat?.name
+            statNameLabel.text = stat?.stat?.name?.capitalized.replacingOccurrences(of: "-", with: " ")
             if let statBar = stat?.baseStat {
                 let progress = Float(statBar) / 100
                 progressView.setProgress(progress, animated: false)
             }
+        }
+    }
+    var color: UIColor? {
+        didSet {
+            progressView.tintColor = color
+            statNameLabel.textColor = color
         }
     }
 

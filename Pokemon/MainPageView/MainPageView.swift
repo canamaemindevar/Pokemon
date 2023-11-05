@@ -18,7 +18,7 @@ final class MainPageView: UIViewController {
 
     //MARK: - Components
     var collectionView: UICollectionView!
-    private let searchVc = UISearchController(searchResultsController: nil)
+    private let searchBar = UISearchController(searchResultsController: nil)
     var filteredPokemons: [Pokemon] = []
 
     //MARK: - Life Cycle
@@ -42,17 +42,18 @@ extension MainPageView: MainPageViewInterface {
         configureCollectionView()
         collectionView.delegate = self
         collectionView.dataSource = self
-        navigationController?.navigationBar.backgroundColor = ColorPalette.background
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        navigationItem.searchController = searchVc
+        navigationItem.searchController = searchBar
         view.backgroundColor = ColorPalette.background
-        searchVc.searchBar.delegate = self
+        searchBar.searchBar.searchTextField.backgroundColor = .white
+        searchBar.searchBar.delegate = self
         viewModel.fetchPokemons()
-        configureViewController()
+        self.navigationController?.navigationBar.backgroundColor = ColorPalette.background
+        let logoImageView = UIImageView(image: UIImage(named: "Title.png"))
+        logoImageView.contentMode = .scaleAspectFit
+        navigationItem.titleView = logoImageView
     }
-    func configureViewController() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-    }
+
     func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
         view.addSubview(collectionView)
@@ -100,6 +101,7 @@ extension MainPageView: UISearchBarDelegate {
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        viewModel.listingPokemonCount = 0
         viewModel.fetchPokemons()
     }
 }

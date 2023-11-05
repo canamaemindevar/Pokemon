@@ -49,9 +49,8 @@ final class DetailView: UIViewController {
     private let aboutLabel : UILabel = {
         let aboutLabel = UILabel()
         aboutLabel.translatesAutoresizingMaskIntoConstraints = false
-        aboutLabel.textColor = UIColor(named: "bulbasourColor")
         aboutLabel.text = "About"
-        aboutLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        aboutLabel.font = FontManager.shared.boldFont(size: 20)
         aboutLabel.textAlignment = .center
         return aboutLabel
     }()
@@ -68,7 +67,7 @@ final class DetailView: UIViewController {
         let weightLabel = UILabel()
         weightLabel.translatesAutoresizingMaskIntoConstraints = false
         weightLabel.text = "6.9 kg"
-        weightLabel.font = UIFont.systemFont(ofSize: 12)
+        weightLabel.font = FontManager.shared.regularFont(size: 15)
         return weightLabel
     }()
 
@@ -84,7 +83,7 @@ final class DetailView: UIViewController {
         let heightLabel = UILabel()
         heightLabel.translatesAutoresizingMaskIntoConstraints = false
         heightLabel.text = "0.7 m"
-        heightLabel.font = UIFont.systemFont(ofSize: 12)
+        heightLabel.font = FontManager.shared.regularFont(size: 15)
         return heightLabel
     }()
 
@@ -92,7 +91,7 @@ final class DetailView: UIViewController {
         let movesLabel = UILabel()
         movesLabel.translatesAutoresizingMaskIntoConstraints = false
         movesLabel.text = "Chlorophyll Overgrow"
-        movesLabel.font = UIFont.systemFont(ofSize: 12)
+        movesLabel.font = FontManager.shared.regularFont(size: 15)
         movesLabel.numberOfLines = 2
         movesLabel.textAlignment = .center
         return movesLabel
@@ -103,7 +102,7 @@ final class DetailView: UIViewController {
         weightLabelText.translatesAutoresizingMaskIntoConstraints = false
         weightLabelText.text = "Weight"
         weightLabelText.textColor = .gray
-        weightLabelText.font = UIFont.systemFont(ofSize: 9)
+        weightLabelText.font = FontManager.shared.regularFont(size: 12)
         return weightLabelText
     }()
 
@@ -112,7 +111,7 @@ final class DetailView: UIViewController {
         heightLabelText.translatesAutoresizingMaskIntoConstraints = false
         heightLabelText.text = "Height"
         heightLabelText.textColor = .gray
-        heightLabelText.font = UIFont.systemFont(ofSize: 9)
+        heightLabelText.font = FontManager.shared.regularFont(size: 12)
         return heightLabelText
     }()
 
@@ -122,7 +121,7 @@ final class DetailView: UIViewController {
         movesLabelText.text = "Moves"
         movesLabelText.textColor = .gray
                 movesLabelText.textAlignment = .center
-        movesLabelText.font = UIFont.systemFont(ofSize: 9)
+        movesLabelText.font = FontManager.shared.regularFont(size: 12)
         return movesLabelText
     }()
 
@@ -130,7 +129,7 @@ final class DetailView: UIViewController {
         let descriptionLabel = UILabel()
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.text = "There is a plant seed on its back right from the day this Pokémon is born. The seed slowly grows larger."
-        descriptionLabel.font = UIFont.systemFont(ofSize: 10)
+        descriptionLabel.font = FontManager.shared.regularFont(size: 15)
         descriptionLabel.numberOfLines = 0
         return descriptionLabel
     }()
@@ -140,7 +139,7 @@ final class DetailView: UIViewController {
         baseStatsLabel.translatesAutoresizingMaskIntoConstraints = false
         baseStatsLabel.textColor = UIColor(named: "bulbasourColor")
         baseStatsLabel.text = "Base Stats"
-        baseStatsLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        baseStatsLabel.font = FontManager.shared.boldFont(size: 20)
         baseStatsLabel.textAlignment = .center
         return baseStatsLabel
     }()
@@ -181,7 +180,10 @@ extension DetailView: DetailViewInterface {
             self.weightLabel.text = pokemonResponse.weight?.description
 
             if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
-                self.view.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .ghost)
+                let color =  getColor(for: PokemonTypeColor(rawValue: type) ?? .ghost)
+                self.view.backgroundColor = color
+                self.aboutLabel.textColor = color
+                self.baseStatsLabel.textColor = color
             }
             self.tableView.reloadData()
             self.mainCollectionView.reloadData()
@@ -273,7 +275,7 @@ extension DetailView: DetailViewInterface {
 
             baseStatsLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             baseStatsLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            baseStatsLabel.widthAnchor.constraint(equalToConstant: 100),
+            baseStatsLabel.widthAnchor.constraint(equalToConstant: 200),
 
             contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: 120),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
@@ -308,6 +310,9 @@ extension DetailView: UITableViewDataSource{
             return UITableViewCell()
         }
         let stat =  viewModel.pokemonResponse?.stats?[indexPath.row]
+        if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
+            cell.color = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)
+        }
         cell.stat = stat
         return cell
     }
@@ -321,7 +326,7 @@ extension DetailView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonTypeCollectionViewCell.identifier, for: indexPath) as? PokemonTypeCollectionViewCell else { return UICollectionViewCell() }
-        cell.typeNameLabel.text = viewModel.typeStrings[indexPath.row].type?.name
+        cell.typeNameLabel.text = viewModel.typeStrings[indexPath.row].type?.name?.capitalized
         cell.layer.cornerRadius = 20
         if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
         cell.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)

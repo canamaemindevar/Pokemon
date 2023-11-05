@@ -20,7 +20,7 @@ class pokeTitleLabel: UILabel {
     init(textAlignment: NSTextAlignment, fontSize: CGFloat) {
         super.init(frame: .zero)
         self.textAlignment = textAlignment
-        self.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
+        self.font = FontManager.shared.regularFont(size: 15)
         configure()
     }
 

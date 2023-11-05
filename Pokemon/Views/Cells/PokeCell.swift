@@ -15,7 +15,7 @@ final class PokeCell: UICollectionViewCell {
         static let directionalMargins = NSDirectionalEdgeInsets(top: 8.0, leading: 8.0, bottom: 8.0, trailing: 8.0)
     }
 
-    static let reuseID = "FollowerCell"
+    static let reuseID = "PokeCell"
     let avatarImageView = GFAvatarImageView(frame: .zero)
     let pokeNameLabel   = pokeTitleLabel(textAlignment: .center, fontSize: 16)
 
@@ -37,7 +37,7 @@ final class PokeCell: UICollectionViewCell {
     }
 
     func set(pokemon: Pokemon) {
-        pokeNameLabel.text = pokemon.name
+        pokeNameLabel.text = pokemon.name?.capitalized
         if let url = pokemon.url {
             if let id = ImageManager.extractNumberFromURL(url) {
                 let imageUrl = ImageManager.createPokemonImageURL(number: id)

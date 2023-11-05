@@ -14,7 +14,8 @@ class PokemonTypeCollectionViewCell: UICollectionViewCell {
     let typeNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .italicSystemFont(ofSize: 10)
+        label.font = FontManager.shared.regularFont(size: 15)
+        label.textColor = .white
         label.textAlignment = .center
         return label
     }()
