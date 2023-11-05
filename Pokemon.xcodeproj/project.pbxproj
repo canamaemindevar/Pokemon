@@ -107,9 +107,16 @@
 		A981AAF02AF4DB9500F3590A /* Pokemon */ = {
 			isa = PBXGroup;
 			children = (
+				A981AB4E2AF79BD000F3590A /* AppDelegates */,
+				A981AB4D2AF79BC100F3590A /* Resource */,
 				A981AB1C2AF4F30C00F3590A /* Base */,
 				A981AAFF2AF4DB9700F3590A /* Info.plist */,
-				A981AB1D2AF4F31800F3590A /* Features */,
+				A981AB4F2AF79BE700F3590A /* Managers */,
+				A981AB322AF517D700F3590A /* Views */,
+				A981AB302AF5179500F3590A /* Helpers */,
+				A981AB1E2AF4F37B00F3590A /* DetailView */,
+				A981AB162AF4F07E00F3590A /* MainPageView */,
+				A981AB112AF4E05F00F3590A /* Models */,
 				A981AB332AF5201D00F3590A /* README.md */,
 			);
 			path = Pokemon;
@@ -118,6 +125,7 @@
 		A981AB052AF4DBA500F3590A /* NetworkManager */ = {
 			isa = PBXGroup;
 			children = (
+				A981AB082AF4DBF800F3590A /* NetworkHelpers.swift */,
 				A981AB0D2AF4DC8500F3590A /* NetworkManager */,
 				A981AB0C2AF4DC7400F3590A /* Core */,
 			);
@@ -161,29 +169,11 @@
 		A981AB1C2AF4F30C00F3590A /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				A981AAF12AF4DB9500F3590A /* AppDelegate.swift */,
-				A981AAF32AF4DB9500F3590A /* SceneDelegate.swift */,
 				A981AAF52AF4DB9500F3590A /* ViewController.swift */,
 				A981AAF72AF4DB9500F3590A /* Main.storyboard */,
-				A981AAFA2AF4DB9700F3590A /* Assets.xcassets */,
 				A981AAFC2AF4DB9700F3590A /* LaunchScreen.storyboard */,
 			);
 			path = Base;
-			sourceTree = "<group>";
-		};
-		A981AB1D2AF4F31800F3590A /* Features */ = {
-			isa = PBXGroup;
-			children = (
-				A981AB4B2AF7914200F3590A /* FontManager.swift */,
-				A981AB452AF7911800F3590A /* CustomFont */,
-				A981AB322AF517D700F3590A /* Views */,
-				A981AB302AF5179500F3590A /* Helpers */,
-				A981AB1E2AF4F37B00F3590A /* DetailView */,
-				A981AB162AF4F07E00F3590A /* MainPageView */,
-				A981AB112AF4E05F00F3590A /* Models */,
-				A981AB052AF4DBA500F3590A /* NetworkManager */,
-			);
-			path = Features;
 			sourceTree = "<group>";
 		};
 		A981AB1E2AF4F37B00F3590A /* DetailView */ = {
@@ -208,11 +198,9 @@
 		A981AB302AF5179500F3590A /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				A981AB082AF4DBF800F3590A /* NetworkHelpers.swift */,
 				A981AB272AF4F91100F3590A /* UIHelper.swift */,
 				A981AB0A2AF4DC1C00F3590A /* Logger.swift */,
 				A981AB392AF640CC00F3590A /* ColorPalette.swift */,
-				A981AB3D2AF65FB500F3590A /* ImageManager.swift */,
 				A981AB3F2AF6614900F3590A /* PokemonColorEnum.swift */,
 				A981AB412AF66DF000F3590A /* ErrosTypes.swift */,
 			);
@@ -245,6 +233,34 @@
 				A981AB482AF7911800F3590A /* Poppins-Bold.ttf */,
 			);
 			path = Font;
+			sourceTree = "<group>";
+		};
+		A981AB4D2AF79BC100F3590A /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				A981AB452AF7911800F3590A /* CustomFont */,
+				A981AAFA2AF4DB9700F3590A /* Assets.xcassets */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		A981AB4E2AF79BD000F3590A /* AppDelegates */ = {
+			isa = PBXGroup;
+			children = (
+				A981AAF12AF4DB9500F3590A /* AppDelegate.swift */,
+				A981AAF32AF4DB9500F3590A /* SceneDelegate.swift */,
+			);
+			path = AppDelegates;
+			sourceTree = "<group>";
+		};
+		A981AB4F2AF79BE700F3590A /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				A981AB4B2AF7914200F3590A /* FontManager.swift */,
+				A981AB3D2AF65FB500F3590A /* ImageManager.swift */,
+				A981AB052AF4DBA500F3590A /* NetworkManager */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
