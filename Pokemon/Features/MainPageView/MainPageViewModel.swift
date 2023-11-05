@@ -16,6 +16,7 @@ final class MainPageViewModel: MainPageViewModelInterface {
     private weak var view: MainPageViewInterface?
     var manager: (PokemonsFethable & PokemonQueryable)
     var poke: [Pokemon] = []
+    var listingPokemonCount = 0
 
     init(view: MainPageViewInterface, manager: (PokemonsFethable & PokemonQueryable)) {
         self.view = view
@@ -26,13 +27,14 @@ final class MainPageViewModel: MainPageViewModelInterface {
     }
 
     func fetchPokemons() {
-        manager.fetchPokemons {[weak self] response in
+        manager.fetchPokemons(page: listingPokemonCount) {[weak self] response in
             switch response {
                 case .success(let success):
                     if let results = success.results {
-                        self?.poke = results
+                        self?.poke.append(contentsOf: results)
                     }
                     self?.view?.updateData()
+                    self?.listingPokemonCount += 20
                 case .failure(let failure):
                     print(failure)
             }

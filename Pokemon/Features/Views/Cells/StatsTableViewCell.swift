@@ -39,7 +39,7 @@ final class StatsTableViewCell: UITableViewCell {
         let sView = UIStackView()
         sView.translatesAutoresizingMaskIntoConstraints = false
         sView.axis = .horizontal
-        sView.distribution = .fillProportionally
+        sView.distribution = .fillEqually
         sView.alignment = .center
         return sView
     }()
@@ -67,10 +67,7 @@ final class StatsTableViewCell: UITableViewCell {
             hStackview.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             hStackview.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             hStackview.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            hStackview.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-
-            progressView.widthAnchor.constraint(equalToConstant: 200),
-            progressView.heightAnchor.constraint(equalToConstant: 7)
+            hStackview.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
     }
 }

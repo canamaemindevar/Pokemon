@@ -23,43 +23,26 @@ enum HTTPMethod: String {
     case patch = "PATCH"
 }
 
-
-
-//IMPORTANT
 enum Endpoint {
-    case fetchPokemons
+    case fetchPokemons(page: Int)
     case queryPokemon(name: String)
 }
-
 
 extension Endpoint: EndpointProtocol {
 
     var baseURL: String {
-        switch self {
-            case .fetchPokemons:
-                return "https://pokeapi.co"
-            case .queryPokemon:
-                return "https://pokeapi.co"
-        }
-
+        return "https://pokeapi.co"
     }
 
     var path: String {
         switch self {
             case .fetchPokemons: return "/api/v2/pokemon"
-
             case .queryPokemon(let name): return "/api/v2/pokemon/\(name.lowercased())"
-
         }
     }
 
     var method: HTTPMethod {
-        switch self {
-            case .fetchPokemons: return .get
-
-            case .queryPokemon: return .get
-
-        }
+        return .get
     }
 
     var header: [String : String]? {
@@ -71,16 +54,18 @@ extension Endpoint: EndpointProtocol {
         return nil
     }
 
-
     func request() -> URLRequest {
         guard var components = URLComponents(string: baseURL) else {
             fatalError("URL ERROR")
         }
 
-        //Add Path
+        if case .fetchPokemons(let page) = self {
+            components.queryItems = [URLQueryItem(name: "offset", value: String(describing: page))
+            ]
+        }
+
         components.path = path
 
-        //Create request
         var request = URLRequest(url: components.url!)
         request.httpMethod = method.rawValue
 
@@ -94,15 +79,11 @@ extension Endpoint: EndpointProtocol {
             }
         }
 
-
-        //Add Header
         if let header = header {
             for (key, value) in header {
                 request.setValue(value, forHTTPHeaderField: key)
             }
         }
-
         return request
     }
 }
-

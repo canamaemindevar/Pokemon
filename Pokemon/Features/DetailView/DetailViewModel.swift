@@ -25,13 +25,13 @@ final class DetailViewModel: DetailViewModelInterface {
         view?.prepare()
     }
     func queryPokemon(pokemonName: String) {
-        manager.queryPokemon(pokemonName) { response in
+        manager.queryPokemon(pokemonName) {[weak self] response in
             switch response {
                 case .success(let success):
-                    self.pokemonResponse = success
-                    self.view?.updateView(pokemonResponse: success)
+                    self?.pokemonResponse = success
+                    self?.view?.updateView(pokemonResponse: success)
                     if let abitly = success.types {
-                        self.typeStrings = abitly
+                        self?.typeStrings = abitly
                     }
                 case .failure(let failure):
                     print(failure)

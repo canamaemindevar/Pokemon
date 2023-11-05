@@ -19,7 +19,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         window?.rootViewController = createSearchNC()
-      //  window?.rootViewController = DetailView()
         window?.makeKeyAndVisible()
         configureNavigationBar()
     }

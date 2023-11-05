@@ -29,7 +29,7 @@ final class DetailView: UIViewController {
     private let pokeImage : UIImageView = {
         let pokeImage = UIImageView()
         pokeImage.translatesAutoresizingMaskIntoConstraints = false
-        pokeImage.image = UIImage(named: "bulbasour")
+        pokeImage.image = UIImage(named: "imagePlaceHolder.png")
         return pokeImage
     }()
 
@@ -94,6 +94,7 @@ final class DetailView: UIViewController {
         movesLabel.text = "Chlorophyll Overgrow"
         movesLabel.font = UIFont.systemFont(ofSize: 12)
         movesLabel.numberOfLines = 2
+        movesLabel.textAlignment = .center
         return movesLabel
     }()
 
@@ -120,7 +121,7 @@ final class DetailView: UIViewController {
         movesLabelText.translatesAutoresizingMaskIntoConstraints = false
         movesLabelText.text = "Moves"
         movesLabelText.textColor = .gray
-        //        movesLabelText.textAlignment = .center
+                movesLabelText.textAlignment = .center
         movesLabelText.font = UIFont.systemFont(ofSize: 9)
         return movesLabelText
     }()
@@ -153,6 +154,12 @@ final class DetailView: UIViewController {
         tableView.layer.cornerRadius = 10
         return tableView
     }()
+
+    private var loadingView: LoadingView = {
+        let loadingView = LoadingView()
+        loadingView.view.translatesAutoresizingMaskIntoConstraints = false
+        return loadingView
+    }()
     //MARK: - Life Cycle
 
     override func viewDidLoad() {
@@ -174,8 +181,7 @@ extension DetailView: DetailViewInterface {
             self.weightLabel.text = pokemonResponse.weight?.description
 
             if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
-                self.view.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)
-
+                self.view.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .ghost)
             }
             self.tableView.reloadData()
             self.mainCollectionView.reloadData()
@@ -183,15 +189,17 @@ extension DetailView: DetailViewInterface {
                 if let id = ImageManager.extractNumberFromURL(url) {
                     let imageUrl = ImageManager.createPokemonImageURL(number: id)
                     self.pokeImage.sd_setImage(with: URL(string: imageUrl))
+                    self.loadingView.view.isHidden = true
                 }
             }
         }
     }
-
+//MARK: - prepare
     func prepare() {
         self.navigationController?.navigationBar.backgroundColor = .clear
         tableView.dataSource = self
         mainCollectionView.dataSource = self
+        view.backgroundColor = .blue
         view.addSubview(contentView)
         view.addSubview(pokeImage)
         view.addSubview(aboutLabel)
@@ -207,18 +215,17 @@ extension DetailView: DetailViewInterface {
         view.addSubview(imageWeight)
         view.addSubview(imageHeight)
         view.addSubview(mainCollectionView)
+        view.addSubview(loadingView.view)
         let width = UIScreen.main.bounds.width
         if let pokemon = pokemon {
             if let name = pokemon.name {
                 viewModel.queryPokemon(pokemonName: name)
             }
-
         }
 
         NSLayoutConstraint.activate([
             pokeImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            pokeImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            pokeImage.bottomAnchor.constraint(equalTo: pokeImage.bottomAnchor),
+            pokeImage.centerYAnchor.constraint(equalTo: contentView.topAnchor),
             pokeImage.widthAnchor.constraint(equalToConstant: 200),
             pokeImage.heightAnchor.constraint(equalToConstant: 180),
 
@@ -246,7 +253,7 @@ extension DetailView: DetailViewInterface {
 
             movesLabel.topAnchor.constraint(equalTo: aboutLabel.bottomAnchor, constant: 20),
             movesLabel.leadingAnchor.constraint(equalTo: heightLabel.trailingAnchor),
-            movesLabel.widthAnchor.constraint(equalToConstant: 100),
+            movesLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -45),
 
             weightLabelText.topAnchor.constraint(equalTo: weightLabel.bottomAnchor, constant: 20),
             weightLabelText.leadingAnchor.constraint(equalTo: imageWeight.trailingAnchor),
@@ -268,7 +275,7 @@ extension DetailView: DetailViewInterface {
             baseStatsLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
             baseStatsLabel.widthAnchor.constraint(equalToConstant: 100),
 
-            contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: 300),
+            contentView.topAnchor.constraint(equalTo: view.topAnchor, constant: 120),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
             view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -281,13 +288,18 @@ extension DetailView: DetailViewInterface {
             mainCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor,constant: 20),
             mainCollectionView.topAnchor.constraint(equalTo: pokeImage.bottomAnchor, constant: 4),
             mainCollectionView.bottomAnchor.constraint(equalTo: aboutLabel.topAnchor,constant: 8),
-            mainCollectionView.widthAnchor.constraint(equalToConstant: width / 2 )
+            mainCollectionView.widthAnchor.constraint(equalToConstant: width / 2 ),
+
+            loadingView.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingView.view.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            loadingView.view.heightAnchor.constraint(equalToConstant: 100),
+            loadingView.view.widthAnchor.constraint(equalToConstant: 100),
         ])
     }
 
 }
-
-extension DetailView: UITableViewDataSource , UITableViewDelegate{
+//MARK: - UITableViewDataSource
+extension DetailView: UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.pokemonResponse?.stats?.count ?? 4
     }
@@ -301,6 +313,7 @@ extension DetailView: UITableViewDataSource , UITableViewDelegate{
     }
     
 }
+//MARK: - UICollectionViewDataSource
 extension DetailView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.typeStrings.count
@@ -312,7 +325,6 @@ extension DetailView: UICollectionViewDataSource {
         cell.layer.cornerRadius = 20
         if let type = self.viewModel.pokemonResponse?.types?.first?.type?.name {
         cell.backgroundColor = getColor(for: PokemonTypeColor(rawValue: type) ?? .dark)
-
         }
         return cell
     }

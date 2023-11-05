@@ -34,6 +34,7 @@
 		A981AB3E2AF65FB500F3590A /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A981AB3D2AF65FB500F3590A /* ImageManager.swift */; };
 		A981AB402AF6614900F3590A /* PokemonColorEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A981AB3F2AF6614900F3590A /* PokemonColorEnum.swift */; };
 		A981AB422AF66DF000F3590A /* ErrosTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A981AB412AF66DF000F3590A /* ErrosTypes.swift */; };
+		A981AB442AF7809000F3590A /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A981AB432AF7809000F3590A /* LoadingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		A981AB3D2AF65FB500F3590A /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		A981AB3F2AF6614900F3590A /* PokemonColorEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonColorEnum.swift; sourceTree = "<group>"; };
 		A981AB412AF66DF000F3590A /* ErrosTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrosTypes.swift; sourceTree = "<group>"; };
+		A981AB432AF7809000F3590A /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +217,7 @@
 				A981AB2B2AF50E6700F3590A /* Cells */,
 				A981AB252AF4F8ED00F3590A /* PokeTitleLabel.swift */,
 				A981AB292AF4FA0700F3590A /* GFAvatarImageView.swift */,
+				A981AB432AF7809000F3590A /* LoadingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				A981AB072AF4DBBB00F3590A /* CoreNetworManager.swift in Sources */,
 				A981AB192AF4F08F00F3590A /* MainPageView.swift in Sources */,
 				A981AB242AF4F8C900F3590A /* PokeCell.swift in Sources */,
+				A981AB442AF7809000F3590A /* LoadingView.swift in Sources */,
 				A981AB2A2AF4FA0700F3590A /* GFAvatarImageView.swift in Sources */,
 				A981AB0B2AF4DC1C00F3590A /* Logger.swift in Sources */,
 				A981AB2F2AF50EA300F3590A /* StatsTableViewCell.swift in Sources */,

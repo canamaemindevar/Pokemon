@@ -12,10 +12,6 @@ protocol MainPageViewInterface: AnyObject {
     func updateData()
 }
 
-enum Section {
-    case main
-}
-
 final class MainPageView: UIViewController {
     
     private lazy var viewModel = MainPageViewModel(view: self, manager: NetworkManager())
@@ -30,14 +26,12 @@ final class MainPageView: UIViewController {
     override func viewDidLoad() {
         viewModel.viewDidLoad()
         super.viewDidLoad()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
-    
 }
 
 //MARK: - MainPageViewViewInterface
@@ -48,25 +42,22 @@ extension MainPageView: MainPageViewInterface {
         configureCollectionView()
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .white
-        navigationController?.navigationBar.backgroundColor = .red
-       // navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.backgroundColor = ColorPalette.background
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
         navigationItem.searchController = searchVc
+        view.backgroundColor = ColorPalette.background
         searchVc.searchBar.delegate = self
         viewModel.fetchPokemons()
         configureViewController()
     }
     func configureViewController() {
-        view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
         view.addSubview(collectionView)
-        collectionView.backgroundColor = ColorPalette.background
+        collectionView.backgroundColor = .white
         collectionView.register(PokeCell.self, forCellWithReuseIdentifier: PokeCell.reuseID)
-
     }
 
     func updateData() {
@@ -75,7 +66,6 @@ extension MainPageView: MainPageViewInterface {
         }
     }
 }
-
 
 extension MainPageView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -96,7 +86,12 @@ extension MainPageView: UICollectionViewDataSource {
         return cell
     }
 
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
 
+        if indexPath.row == viewModel.poke.count - 5 {
+            viewModel.fetchPokemons()
+        }
+    }
 }
 extension MainPageView: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -107,5 +102,4 @@ extension MainPageView: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         viewModel.fetchPokemons()
     }
-
 }

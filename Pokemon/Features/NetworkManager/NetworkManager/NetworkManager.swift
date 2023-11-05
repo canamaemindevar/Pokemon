@@ -9,7 +9,7 @@ import Foundation
 
 
 protocol PokemonsFethable {
-    func fetchPokemons(completion: @escaping (Result<PokemonsResponse, ErrosTypes>) -> Void) 
+    func fetchPokemons(page: Int,completion: @escaping (Result<PokemonsResponse, ErrosTypes>) -> Void)
 }
 
 protocol PokemonQueryable {
@@ -27,8 +27,8 @@ final class NetworkManager {
 
 extension NetworkManager: PokemonsFethable {
 
-    func fetchPokemons(completion: @escaping (Result<PokemonsResponse, ErrosTypes>) -> Void) {
-        let endPoint = Endpoint.fetchPokemons
+    func fetchPokemons(page: Int,completion: @escaping (Result<PokemonsResponse, ErrosTypes>) -> Void) {
+        let endPoint = Endpoint.fetchPokemons(page: page)
         coreManager.request(endPoint, completion: completion)
     }
 }
