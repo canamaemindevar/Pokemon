@@ -174,7 +174,7 @@ extension DetailView: DetailViewInterface {
 
         DispatchQueue.main.async {
             if let moves = pokemonResponse.moves?.first?.move?.name{
-                self.movesLabel.text = moves
+                self.movesLabel.text = moves.capitalized.replacingOccurrences(of: "-", with: " ")
             }
             self.heightLabel.text = pokemonResponse.height?.description
             self.weightLabel.text = pokemonResponse.weight?.description

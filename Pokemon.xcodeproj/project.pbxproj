@@ -109,6 +109,7 @@
 		A981AAF02AF4DB9500F3590A /* Pokemon */ = {
 			isa = PBXGroup;
 			children = (
+				A981AB522AF7B9BC00F3590A /* ScreenShots */,
 				A981AB4E2AF79BD000F3590A /* AppDelegates */,
 				A981AB4D2AF79BC100F3590A /* Resource */,
 				A981AB1C2AF4F30C00F3590A /* Base */,
@@ -264,6 +265,13 @@
 				A981AB052AF4DBA500F3590A /* NetworkManager */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		A981AB522AF7B9BC00F3590A /* ScreenShots */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ScreenShots;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
