@@ -36,9 +36,9 @@ final class PokeCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func set(pokemon:: Pokemon) {
-        pokeNameLabel.text = pokemon:.name
-        if let url = pokemon:.url {
+    func set(pokemon: Pokemon) {
+        pokeNameLabel.text = pokemon.name
+        if let url = pokemon.url {
             if let id = ImageManager.extractNumberFromURL(url) {
                 let imageUrl = ImageManager.createPokemonImageURL(number: id)
                 avatarImageView.sd_setImage(with: URL(string: imageUrl))

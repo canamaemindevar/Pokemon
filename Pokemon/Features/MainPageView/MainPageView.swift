@@ -82,7 +82,7 @@ extension MainPageView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokeCell.reuseID, for: indexPath) as? PokeCell else { return UICollectionViewCell() }
-        cell.set(pokemon:: viewModel.poke[indexPath.row])
+        cell.set(pokemon: viewModel.poke[indexPath.row])
         return cell
     }
 
